@@ -282,6 +282,9 @@ def asignarMozos():
                 break
     else:
         print("La mesa no esta registrada")
+        
+        
+        
 def Cambiar_mozo():
     mostrarMozos()
     if not listaMozos:
