@@ -8,6 +8,204 @@ archivo_mesas = "Mesas.xlsx"
 data_mesas = pd.read_excel(archivo_mesas)
 #---------------------------------------------------#
 
+class Restaurante:
+    def __init__(self, Mozos, Mesas):
+        self.__mozos = Mozos
+        self.__Mesas = Mesas
+    
+    @property
+    def mosos (self):
+        return self.__mozos
+    
+    @property
+    def mesas (self):
+        return self.__Mesas
+    def guardar_mesas (self,mesa):
+        archivo_mesas = "Mesas.xlsx"
+        data_mesas = pd.read_excel(archivo_mesas)
+        nueva_mesa = {
+            "numero_mesa": mesa.numeroMesa,
+            "zona_mesa": mesa.zonaMesa,
+            "capacidad_mesa": mesa.capacidad,
+            "estado_mesa": mesa.estado
+        }
+        
+        data_mesas = pd.concat([data_mesas, pd.DataFrame([nueva_mesa])], ignore_index=True)
+        data_mesas.to_excel("Mesas.xlsx", index= False)
+    
+      #|id_mozo | nombre|telefono | estado |mesas_reservadas
+    def guardar_mozos (self,mozo):
+        archivoMozos = "Mozos.xlsx"
+        data_mozos = pd.read_excel(archivoMozos)
+        nuevo_mozo = {
+            "id_mozo": mozo.idMozo,
+            "nombre": mozo.nombre,
+            "telefono": mozo.telefono,
+            "estado": mozo.estado,
+            "mesas_reservadas": []
+        }
+        
+        data_mozos = pd.concat([data_mozos,pd.DataFrame([nuevo_mozo])], ignore_index= True)
+        data_mozos.to_excel("Mozos.xlsx", index=False)
+        
+        
+    
+    # ?------------------------------------------------------------------------------
+    def reporte_registros(self):
+        # Mostrar el reporte de mesas registradas
+        print("-" * 80)
+        print("MESAS REGISTRADAS".center(80))
+        print("Terraza: ", len(data_mesas[data_mesas["zona_mesa"] == "Terraza"] ["numero_mesa"].tolist()), "mesas")
+        print("Sala   : ", len(data_mesas[data_mesas["zona_mesa"] == "Sala"]["numero_mesa"].tolist()), "mesas")
+        print("TOTAL DE REGISTROS PERMITIDOS POR EL RESTAURANTE: 50 MESAS")
+        print("20 MESAS EN TERRAZA Y 30 MESAS EN SALA".center(56))
+        print("-" * 80)
+    # ?------------------------------------------------------------------------------
+        
+        
+
+    def registrar_mesas(self):
+        # Ingresamos el numero de mesa
+        #   | numero_mesa | zona_mesa | capacidad_mesa | estado_mesa  --> Nombres de la tabla de datos
+        print("Registro de mesas".center(80, "-"))
+        while True:
+            try:
+                numero_mesa = int(input("Ingrese el numero de mesa a registrar (1 - 50): "))
+                if 1<= numero_mesa <= 50:
+                    if numero_mesa in data_mesas["numero_mesa"].values:
+                        print("Error, la mesa ya  esta registrada")
+                        return
+                    else:
+                        break
+                else:
+                    print("Error, el numero de mesa esta fuera de rango (50 mesas maximo)")
+            except ValueError:
+                print("Error en los datos de ingreso")
+        while True:
+            zona_mesa = input("Ingrese la zona de disponibilidad de la mesa (Sala/Terraza): ").title()
+            if zona_mesa in ["Sala", "Terraza"]:
+                break
+            else:
+                print("Error, la zona de registro no es correcta")
+                
+                
+                
+        # ?------------------------------------------------------------------------------
+        # Validamos la zona de la mesa
+        if zona_mesa == "Sala":
+            if len(data_mesas[data_mesas["zona_mesa"] == "Sala"]) >= 30:
+                print("Error, ya se han registrado 30 mesas en la zona Sala")
+                return
+        if zona_mesa == "Terraza":
+            if len(data_mesas[data_mesas["zona_mesa"] == "Terraza"]) >= 20:
+                print("Error, ya se han registrado 20 mesas en la zona Terraza")
+                return
+        # ?------------------------------------------------------------------------------
+        
+        
+        
+        
+        while True:
+            try:
+                capacidad_mesa = int(input("Ingrese la capacidad de la mesa ( 1 - 4): "))
+                if 1<= capacidad_mesa <= 4:
+                    break
+                else:
+                    print("Error, la capacidad de la mesa no es correcta")
+            except ValueError:
+                print("Error en los datos de ingreso")
+        
+        while True:
+            estado_mesa = input("Ingrese el estado de la mesa (Libre/Ocupada/Reservada): ").title()
+            if estado_mesa in ["Libre", "Ocupada", "Reservada"]:
+                break 
+            else:
+                print("Error, el estado de mesa no es correcto")
+        mesa = Mesas(numero_mesa, zona_mesa,capacidad_mesa, estado_mesa)
+        self.guardar_mesas(mesa)
+        print("-" * 80)
+        print("Mesa registrada correctamente".center(80))
+        print("-" * 80)
+    
+    
+    
+    # ?------------------------------------------------------------------------------
+    def reporte_mozos(self):
+        # Mostrar el reporte de mozos registrados
+        print("-" * 80)
+        print("MOZOS REGISTRADOS".center(80))
+        print("Total de mozos registrados: ", len(data_mozos))
+        print("Mozos activos  : ", len(data_mozos[data_mozos["estado"] == "Activo"]))
+        print("Mozos inactivos: ", len(data_mozos[data_mozos["estado"] == "Inactivo"]))
+        print("-" * 80)
+    # ?------------------------------------------------------------------------------
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    #|id_mozo | nombre|telefono | estado |mesas_reservadas --> Nombre de datos del mozo
+    def registrar_mozos (self):
+        print("-" * 80)
+        print("Registro de mozos".center(80, "-"))
+        print("-" * 80)
+        while True:
+            existe_mzo = False
+            id_mozo = input("Ingrese el id del mozo ( 4 digitos): ")
+            if len(id_mozo) == 4 and id_mozo.isdigit():
+                if id_mozo in data_mozos["id_mozo"].values:
+                    print("Error, el mozo ya esta registrado")
+                    return
+                else:
+                    break
+            else:
+                print("El id debe ser de 4 digitos numericos")
+                
+        while True:
+            nombre_mozo = input("Ingrese el nombre y apellido del mozo: ")
+            contiene_numero = False
+            for caracter in nombre_mozo:
+                if caracter.isdigit():
+                    contiene_numero = True
+                    print("El nombre no debe tener numeros")
+                    break
+            if not contiene_numero:
+                break
+        
+        while True:
+            try:
+                telefono_mozo = input("Ingrese el telefono del mozo (9 digitos): ")
+                if len(telefono_mozo) == 9 and telefono_mozo.isdigit():
+                    if telefono_mozo in data_mozos["telefono"].values:
+                        print("Error el telefono ya esta registrado")
+                    
+                    else: 
+                        break
+                else:
+                    print("Error el telefono no es correcto")
+            except ValueError:
+                print("Error datos de ingreso incorrectos")
+        
+        while True:
+            estado_mozo = input("Ingrese el estado del mozo (Activo/Inactivo) sin espacios: ").title()
+            if estado_mozo in ["Activo", "Inactivo"]:
+                break
+            else:
+                print("Error, el estado del mozo no es correcto")
+        mozo = Mozos(id_mozo,nombre_mozo, telefono_mozo,estado_mozo)    
+        self.guardar_mozos(mozo)
+        
+        print("-" * 80)
+        print("Mozo registrado correctamente".center(80))
+        print("-" * 80)
+
 class Mesas:
     def __init__(self,numeroMesa = 0, zonaMesa =str , capacidad=0, estado_mesa =str):
         self.__numeroMesa = numeroMesa
@@ -47,7 +245,6 @@ class Mesas:
     def liberar_mesas(self):
         pass 
         
-
 class Mozos:
     def __init__(self, idMozo =str, nombre = str, telefono = str,estado = str):
         self.__idMozo = idMozo
@@ -105,7 +302,7 @@ class Mozos:
             return
 
         # Verificar estado del mozo
-        if mozo["estado"] != "activo":
+        if mozo["estado"] != "Activo":
             print("Error: el mozo no está activo y disponible")
             return
 
@@ -119,11 +316,14 @@ class Mozos:
         # Verificar límite de mesas
         if len(m_reservadas) >= 4:
             print("El mozo ya tiene 4 mesas asignadas y ahora está inactivo")
-            data_mozos.at[mozo_index, "estado"] = "inactivo"
+            data_mozos.at[mozo_index, "estado"] = "Inactivo"
             data_mozos.to_excel("Mozos.xlsx", index=False)
             print(f"El mozo {mozo['nombre']} ahora está inactivo.")
             return
-
+        else:
+            data_mozos.at[mozo_index, "estado"] = "Activo"
+            data_mozos.to_excel("Mozos.xlsx", index=False)
+        
         # Asignar mesa
         while True:
             try:
@@ -132,10 +332,10 @@ class Mozos:
                 print("Debe ingresar un número entero")
                 continue
 
-            if not (1 <= mesa <= 100):
+            if not (1 <= mesa <= 50):
                 print("Error, el número de mesa no es válido (1-100)")
                 continue
-
+            
             if str(mesa) not in data_mesas["numero_mesa"].astype(str).values:
                 print("El número de mesa no está registrado")
                 continue
@@ -157,6 +357,17 @@ class Mozos:
 
             # Todo está correcto, asignar mesa
             m_reservadas.append(mesa)
+        
+            
+        # ?------------------------------------------------------------------------------
+            # Actualizar el estado de la mesa a "Reservada"
+            data_mesas.loc[data_mesas["numero_mesa"] == mesa, "estado_mesa"] = "Reservada"
+            data_mesas.to_excel("Mesas.xlsx", index=False)
+        # ?------------------------------------------------------------------------------
+        
+        
+        
+            # Actualizar las mesas reservadas del mozo
             data_mozos.at[mozo_index, "mesas_reservadas"] = str(m_reservadas)
             data_mozos.to_excel("Mozos.xlsx", index=False)
             print(f"Mozo {mozo['nombre']} asignado correctamente a la mesa {mesa}.")
@@ -196,7 +407,20 @@ class Mozos:
                         data_mozos.at[mozo_index, "mesas_reservadas"] = str(m_reservadas)
                         data_mozos.to_excel("Mozos.xlsx", index=False)
                         print(f"Mesa {mesa} eliminada de las asignaciones del mozo {idMozo}.")
+                        
+                        
+                        # ? ---------------------------------------------------------------------------------
+                        # ACTUALIZAR EL ESTADO DEL MOZO A ACTIVO SI TIENE MENOS DE 4 MESAS ASIGNADAS
+                        if len(m_reservadas) < 4:
+                            data_mozos.at[mozo_index, "estado"] = "Activo"
+                            data_mozos.to_excel("Mozos.xlsx", index=False)
+                            print(f"El mozo {idMozo} ahora está activo.")
+                        # ACTUALIZAR EL ESTADO DE LA MESA A LIBRE
+                        data_mesas.loc[data_mesas["numero_mesa"] == mesa, "estado_mesa"] = "Libre"
+                        data_mesas.to_excel("Mesas.xlsx", index=False)
                         break
+                        # ? ---------------------------------------------------------------------------------
+                        
                     else:
                         print("La mesa no está asignada al mozo.")
                 except ValueError:
@@ -251,8 +475,8 @@ class Mozos:
                                     return
                                 
                                 # Cambiar la mesa
-                                m_reservadas.remove(mesa)
                                 nuevo_m_reservadas.append(mesa)
+                                m_reservadas.remove(mesa)
                                 data_mozos.at[mozo_index, "mesas_reservadas"] = str(m_reservadas)
                                 data_mozos.at[nuevo_mozo_index, "mesas_reservadas"] = str(nuevo_m_reservadas)
                                 data_mozos.to_excel("Mozos.xlsx", index=False)
@@ -267,150 +491,6 @@ class Mozos:
                 except ValueError:
                     print("Debe ingresar un número entero.")
                     
-class Restaurante:
-    
-    def __init__(self, Mozos, Mesas):
-        self.__mozos = Mozos
-        self.__Mesas = Mesas
-    
-    @property
-    def mosos (self):
-        return self.__mozos
-    
-    @property
-    def mesas (self):
-        return self.__Mesas
-    def guardar_mesas (self,mesa):
-        archivo_mesas = "Mesas.xlsx"
-        data_mesas = pd.read_excel(archivo_mesas)
-        nueva_mesa = {
-            "numero_mesa": mesa.numeroMesa,
-            "zona_mesa": mesa.zonaMesa,
-            "capacidad_mesa": mesa.capacidad,
-            "estado_mesa": mesa.estado
-        }
-        
-        data_mesas = pd.concat([data_mesas, pd.DataFrame([nueva_mesa])], ignore_index=True)
-        data_mesas.to_excel("Mesas.xlsx", index= False)
-    
-      #|id_mozo | nombre|telefono | estado |mesas_reservadas
-    def guardar_mozos (self,mozo):
-        archivoMozos = "Mozos.xlsx"
-        data_mozos = pd.read_excel(archivoMozos)
-        nuevo_mozo = {
-            "id_mozo": mozo.idMozo,
-            "nombre": mozo.nombre,
-            "telefono": mozo.telefono,
-            "estado": mozo.estado,
-            "mesas_reservadas": []
-        }
-        
-        data_mozos = pd.concat([data_mozos,pd.DataFrame([nuevo_mozo])], ignore_index= True)
-        data_mozos.to_excel("Mozos.xlsx", index=False)
-
-    
-    def registrar_mesas(self):
-        print("Registro de mesas".center(80, "-"))
-        print("-" * 80)
-        
-        # Ingresamos el numero de mesa
-        #   | numero_mesa | zona_mesa | capacidad_mesa | estado_mesa  --> Nombres de la tabla de datos
-        while True:
-            try:
-                numero_mesa = int(input("Ingrese el numero de mesa a registrar (1 - 100): "))
-                if 1<= numero_mesa <= 100:
-                    if numero_mesa in data_mesas["numero_mesa"].values:
-                        print("Error, la mesa ya  esta registrada")
-                        return
-                    else:
-                        break
-                else:
-                    print("Error, el numero de mesa esta fuera de rango")
-            except ValueError:
-                print("Error en los datos de ingreso")
-        while True:
-            zona_mesa = input("Ingrese la zona de disponibilidad de la mesa (sala/terraza): ").lower()
-            if zona_mesa in ["sala", "terraza"]:
-                break
-            else:
-                print("Error, la zona de registro no es correcta")
-        while True:
-            try:
-                capacidad_mesa = int(input("Ingrese la capacidad de la mesa ( 1 - 4): "))
-                if 1<= capacidad_mesa <= 4:
-                    break
-                else:
-                    print("Error, la capacidad de la mesa no es correcta")
-            except ValueError:
-                print("Error en los datos de ingreso")
-        
-        while True:
-            estado_mesa = input("Ingrese el estado de la mesa (libre/ocupada/reservada): ").lower()
-            if estado_mesa in ["libre", "ocupada", "reservada"]:
-                break 
-            else:
-                print("Error, el estado de mesa no es correcto")
-        mesa = Mesas(numero_mesa, zona_mesa,capacidad_mesa, estado_mesa)
-        self.guardar_mesas(mesa)
-        print("-" * 80)
-        print("Mesa registrada correctamente".center(80))
-        print("-" * 80)
-        
-    #|id_mozo | nombre|telefono | estado |mesas_reservadas --> Nombre de datos del mozo
-    def registrar_mozos (self):
-        print("-" * 80)
-        print("Registro de mozos".center(80, "-"))
-        print("-" * 80)
-        while True:
-            existe_mzo = False
-            id_mozo = input("Ingrese el id del mozo ( 4 digitos): ")
-            if len(id_mozo) == 4 and id_mozo.isdigit():
-                if id_mozo in data_mozos["id_mozo"].values:
-                    print("Error, el mozo ya esta registrado")
-                    return
-                else:
-                    break
-            else:
-                print("El id debe ser de 4 digitos numericos")
-                
-        while True:
-            nombre_mozo = input("Ingrese el nombre y apellido del mozo: ")
-            contiene_numero = False
-            for caracter in nombre_mozo:
-                if caracter.isdigit():
-                    contiene_numero = True
-                    print("El nombre no debe tener numeros")
-                    break
-            if not contiene_numero:
-                break
-        
-        while True:
-            try:
-                telefono_mozo = input("Ingrese el telefono del mozo (9 digitos): ")
-                if len(telefono_mozo) == 9 and telefono_mozo.isdigit():
-                    if telefono_mozo in data_mozos["telefono"].values:
-                        print("Error el telefono ya esta registrado")
-                    
-                    else: 
-                        break
-                else:
-                    print("Error el telefono no es correcto")
-            except ValueError:
-                print("Error datos de ingreso incorrectos")
-        
-        while True:
-            estado_mozo = input("Ingrese el estado del mozo (activo/inactivo) sin espacios: ").lower()
-            if estado_mozo in ["activo", "inactivo"]:
-                break
-            else:
-                print("Error, el estado del mozo no es correcto")
-        mozo = Mozos(id_mozo,nombre_mozo, telefono_mozo,estado_mozo)    
-        self.guardar_mozos(mozo)
-        
-        print("-" * 80)
-        print("Mozo registrado correctamente".center(80))
-        print("-" * 80)
-
 def menu():
     print("--" * 30)
     print("<< MENU PRINCIPAL >>".center(60))
@@ -447,25 +527,38 @@ def main():
             break
           
         if opcion == 1:
+        # ?------------------------------------------------------------------------------
+            
             while True:
                 print("----------------------------------------")
                 print("1. Registrar mesas")
                 print("2. Registrar mozos")
-                print("3. Salir")
+                print("3. Reportes de registros mesas por zona")
+                print("4. Reportes de registros mozos")
+                print("5. Salir")
                 try:
                     subopcion = int(input("Seleccione una opcion: "))
-                    if 1 <= subopcion <= 3:
+                    if 1 <= subopcion <= 5:
                         if subopcion == 1:   
                             restaurante.registrar_mesas()
                         elif subopcion == 2:
                             restaurante.registrar_mozos()
                         elif subopcion == 3:
+                            restaurante.reporte_registros()
+                        elif subopcion == 4:
+                            restaurante.reporte_mozos()
+                        elif subopcion == 5:
                             break
                         else:
                             print("Opcion invalida. Intente nuevamente.")
                 except ValueError:
                     print("Entrada invalida. Por favor, ingrese un numero.")
-                
+        # ?------------------------------------------------------------------------------
+            
+            
+            
+            
+            
         elif opcion == 2:  # Asignar mozo a mesa
             while True:
                 print("----------------------------------------")
